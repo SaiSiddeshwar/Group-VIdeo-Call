@@ -1,15 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <resources>
-    <!-- PLEASE KEEP THIS App ID IN SAFE PLACE -->
-    <!-- Get your own App ID at https://dashboard.agora.io/ -->
-    <!-- After you entered the App ID, remove <##> outside of Your App ID -->
-    <!-- For formal released project, please use Security Keys/Token
-        https://docs.agora.io/en/Video/token?platform=All%20Platforms -->
-    <string name="agora_app_id">483180b69bc74b808752a5871a175db1</string>
-    <!-- Please leave it if not enable App Certificate -->
-    <!-- You can generate a temporary token at https://dashboard.agora.io/projects -->
-    <string name="agora_access_token">006df7fa5dd549a45768fd6ee22656d6cb1IAD/L7n4rSfCFhbXVaYEH0Gi5fGn1CkuYxWyY6SYV16wMkeO+aIAAAAAEAB2N7FhCIbvXgEAAQAHhu9e</string>
+    <string name="agora_app_id">df7fa5dd549a45768fd6ee22656d6cb1</string>
+    <string name="agora_access_token">006df7fa5dd549a45768fd6ee22656d6cb1IAAVaC66nxttcbEKjWTbe1MzxQMDVOAex+U9sPNyc6ClIEeO+aIAAAAAEACHUN8csQD7XgEAAQCxAPte</string>
 
     <string-array name="encryption_mode_values">
         <item>AES-128-XTS</item>

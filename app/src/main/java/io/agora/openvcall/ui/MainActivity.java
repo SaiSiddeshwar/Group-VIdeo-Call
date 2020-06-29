@@ -9,14 +9,13 @@ import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.Spinner;
+import android.widget.Toast;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import io.agora.LivevideoCall.LiveCall;
 import io.agora.openvcall.R;
 import io.agora.openvcall.model.CurrentUserSettings;
 
@@ -85,6 +84,12 @@ public class MainActivity extends BaseActivity {
 
     public void onClickJoin(View view) {
         forwardToRoom();
+    }
+
+    public void onlive(View view){
+        Toast.makeText(MainActivity.this,"Hello",Toast.LENGTH_LONG).show();
+        Intent in = new Intent(MainActivity.this, LiveCall.class);
+        startActivity(in);
     }
 
     public void forwardToRoom() {
