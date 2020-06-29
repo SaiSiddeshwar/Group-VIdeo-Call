@@ -8,7 +8,7 @@ import android.widget.RelativeLayout;
 import io.agora.openvcall.R;
 import io.agora.rtc.Constants;
 
-public class RoleActivity extends BaseActivity {
+public class Role extends Base {
 
     public static final String KEY_CLIENT_ROLE = "key_client_role";
 
@@ -44,7 +44,7 @@ public class RoleActivity extends BaseActivity {
     private void gotoLiveActivity(int role) {
         Intent intent = new Intent(getIntent());
         intent.putExtra(KEY_CLIENT_ROLE, role);
-        intent.setClass(getApplicationContext(), LiveActivity.class);
+        intent.setClass(getApplicationContext(), Live.class);
         startActivity(intent);
     }
 

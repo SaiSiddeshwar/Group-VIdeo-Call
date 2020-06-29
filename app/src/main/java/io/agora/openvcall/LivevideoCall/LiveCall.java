@@ -26,7 +26,7 @@ import androidx.core.content.ContextCompat;
 
 import io.agora.openvcall.R;
 
-public class LiveCall extends BaseActivity {
+public class LiveCall extends Base {
     private static final String TAG = LiveCall.class.getSimpleName();
     private static final int MIN_INPUT_METHOD_HEIGHT = 200;
     private static final int ANIM_DURATION = 200;
@@ -205,7 +205,7 @@ public class LiveCall extends BaseActivity {
     }
 
     public void gotoRoleActivity() {
-        Intent intent = new Intent(LiveCall.this, RoleActivity.class);
+        Intent intent = new Intent(LiveCall.this, Role.class);
         String room = mTopicEdit.getText().toString();
 //        config().setChannelName(room);
 

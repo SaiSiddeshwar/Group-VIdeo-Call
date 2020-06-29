@@ -9,13 +9,13 @@ import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.view.WindowManager;
-
+import io.agora.openvcall.AGApplication;
 import androidx.appcompat.app.AppCompatActivity;
 
 import io.agora.rtc.IRtcEngineEventHandler;
 import io.agora.rtc.RtcEngine;
 
-public abstract class BaseActivity extends AppCompatActivity implements EventHandler {
+public abstract class Base extends AppCompatActivity implements EventHandler {
     protected DisplayMetrics mDisplayMetrics = new DisplayMetrics();
     protected int mStatusBarHeight;
 

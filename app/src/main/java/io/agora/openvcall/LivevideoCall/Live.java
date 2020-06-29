@@ -18,8 +18,8 @@ import io.agora.rtc.IRtcEngineEventHandler;
 import io.agora.rtc.video.BeautyOptions;
 import io.agora.rtc.video.VideoEncoderConfiguration;
 
-public class LiveActivity extends RtcBaseActivity {
-    private static final String TAG = LiveActivity.class.getSimpleName();
+public class Live extends RtcBase {
+    private static final String TAG = Live.class.getSimpleName();
 
     private VideoGridContainer mVideoGridContainer;
 

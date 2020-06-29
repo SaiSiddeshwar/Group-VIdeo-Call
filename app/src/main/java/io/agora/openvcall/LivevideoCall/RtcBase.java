@@ -9,7 +9,7 @@ import io.agora.rtc.RtcEngine;
 import io.agora.rtc.video.VideoCanvas;
 import io.agora.rtc.video.VideoEncoderConfiguration;
 
-public abstract class RtcBaseActivity extends BaseActivity implements EventHandler {
+public abstract class RtcBase extends Base implements EventHandler {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -40,12 +40,12 @@
             android:parentActivityName=".ui.CallActivity" />
 
         <activity
-            android:name=".LivevideoCall.LiveActivity"
+            android:name=".LivevideoCall.Live"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:parentActivityName=".LivevideoCall.LiveCall"
             />
         <activity
-            android:name=".LivevideoCall.RoleActivity"
+            android:name=".LivevideoCall.Role"
             android:noHistory="true" />
         <activity
             android:name=".LivevideoCall.LiveCall"/>

@@ -8,17 +8,13 @@ import android.util.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.concurrent.ConcurrentHashMap;
-
+import io.agora.openvcall.LivevideoCall.EventHandler;
+import io.agora.openvcall.LivevideoCall.StatsManager;
 import io.agora.openvcall.model.AGEventHandler;
-import io.agora.openvcall.model.BeforeCallEventHandler;
 import io.agora.openvcall.model.CurrentUserSettings;
-import io.agora.openvcall.model.DuringCallEventHandler;
 import io.agora.openvcall.model.EngineConfig;
+import io.agora.openvcall.model.MyEngineEventHandler;
 import io.agora.rtc.Constants;
-import io.agora.rtc.IRtcEngineEventHandler;
 import io.agora.rtc.RtcEngine;
 
 public class AGApplication extends Application {
@@ -27,8 +23,13 @@ public class AGApplication extends Application {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
     private RtcEngine mRtcEngine;
     private EngineConfig mConfig;
+    private MyEngineEventHandler mEventHandler;
+    private StatsManager mStatsManager = new StatsManager();
 
 
+    public void registerEventHandler(EventHandler handler) {
+        addEventHandler((AGEventHandler) handler);
+    }
 
 
     public RtcEngine rtcEngine() {
@@ -43,16 +44,13 @@ public class AGApplication extends Application {
         return mVideoSettings;
     }
 
-    private final ConcurrentHashMap<AGEventHandler, Integer> mEventHandlerList = new ConcurrentHashMap<>();
+    public StatsManager statsManager() {
+        return mStatsManager;
+    }
 
     public void addEventHandler(AGEventHandler handler) {
-        this.mEventHandlerList.put(handler, 0);
+        mEventHandler.addEventHandler(handler);
     }
-
-    public void removeEventHandler(AGEventHandler handler) {
-        this.mEventHandlerList.remove(handler);
-    }
-
 
     @Override
     public void onCreate() {
@@ -67,7 +65,7 @@ public class AGApplication extends Application {
             throw new RuntimeException("NEED TO use your App ID, get your own ID at https://dashboard.agora.io/");
         }
 
-
+        mEventHandler = new MyEngineEventHandler();
         try {
             // Creates an RtcEngine instance
             mRtcEngine = RtcEngine.create(context, appId, mEventHandler);
@@ -75,10 +73,8 @@ public class AGApplication extends Application {
             log.error(Log.getStackTraceString(e));
             throw new RuntimeException("NEED TO check rtc sdk init fatal error\n" + Log.getStackTraceString(e));
         }
-
         mRtcEngine.setChannelProfile(Constants.CHANNEL_PROFILE_COMMUNICATION);
         mRtcEngine.enableVideo();
-
         mRtcEngine.enableAudioVolumeIndication(200, 3, false);
 
         mConfig = new EngineConfig();
@@ -89,240 +85,10 @@ public class AGApplication extends Application {
         super.onTerminate();
     }
 
-    private final IRtcEngineEventHandler mEventHandler = new IRtcEngineEventHandler() {
-        @Override
-        public void onFirstRemoteVideoDecoded(int uid, int width, int height, int elapsed) {
-            log.debug("onFirstRemoteVideoDecoded " + (uid & 0xFFFFFFFFL) + " " + width + " " + height + " " + elapsed);
-
-            Iterator<AGEventHandler> it = mEventHandlerList.keySet().iterator();
-            while (it.hasNext()) {
-                AGEventHandler handler = it.next();
-                if (handler instanceof DuringCallEventHandler) {
-                    ((DuringCallEventHandler) handler).onFirstRemoteVideoDecoded(uid, width, height, elapsed);
-                }
-            }
-        }
-
-
-        @Override
-        public void onFirstLocalVideoFrame(int width, int height, int elapsed) {
-            log.debug("onFirstLocalVideoFrame " + width + " " + height + " " + elapsed);
-        }
-
-
-        @Override
-        public void onUserJoined(int uid, int elapsed) {
-            log.debug("onUserJoined " + (uid & 0xFFFFFFFFL) + elapsed);
-
-            Iterator<AGEventHandler> it = mEventHandlerList.keySet().iterator();
-            while (it.hasNext()) {
-                AGEventHandler handler = it.next();
-                if (handler instanceof DuringCallEventHandler) {
-                    ((DuringCallEventHandler) handler).onUserJoined(uid);
-                }
-            }
-        }
-
-
-        @Override
-        public void onUserOffline(int uid, int reason) {
-            log.debug("onUserOffline " + (uid & 0xFFFFFFFFL) + " " + reason);
-
-            // FIXME this callback may return times
-            Iterator<AGEventHandler> it = mEventHandlerList.keySet().iterator();
-            while (it.hasNext()) {
-                AGEventHandler handler = it.next();
-                if (handler instanceof DuringCallEventHandler) {
-                    ((DuringCallEventHandler) handler).onUserOffline(uid, reason);
-                }
-            }
-        }
-
-
-        @Override
-        public void onUserMuteVideo(int uid, boolean muted) {
-            log.debug("onUserMuteVideo " + (uid & 0xFFFFFFFFL) + " " + muted);
-
-            Iterator<AGEventHandler> it = mEventHandlerList.keySet().iterator();
-            while (it.hasNext()) {
-                AGEventHandler handler = it.next();
-                if (handler instanceof DuringCallEventHandler) {
-                    ((DuringCallEventHandler) handler).onExtraCallback(AGEventHandler.EVENT_TYPE_ON_USER_VIDEO_MUTED, uid, muted);
-                }
-            }
-        }
-
-
-        @Override
-        public void onRtcStats(RtcStats stats) {
-        }
-
-
-        @Override
-        public void onRemoteVideoStats(RemoteVideoStats stats) {
-            log.debug("onRemoteVideoStats " + stats.uid + " " + stats.delay + " " + stats.receivedBitrate + " " + stats.rendererOutputFrameRate + " " + stats.width + " " + stats.height);
-
-            Iterator<AGEventHandler> it = mEventHandlerList.keySet().iterator();
-            while (it.hasNext()) {
-                AGEventHandler handler = it.next();
-                if (handler instanceof DuringCallEventHandler) {
-                    ((DuringCallEventHandler) handler).onExtraCallback(AGEventHandler.EVENT_TYPE_ON_USER_VIDEO_STATS, stats);
-                }
-            }
-        }
-
-
-        @Override
-        public void onAudioVolumeIndication(AudioVolumeInfo[] speakerInfos, int totalVolume) {
-            if (speakerInfos == null) {
-                // quick and dirty fix for crash
-                // TODO should reset UI for no sound
-                return;
-            }
-
-            Iterator<AGEventHandler> it = mEventHandlerList.keySet().iterator();
-            while (it.hasNext()) {
-                AGEventHandler handler = it.next();
-                if (handler instanceof DuringCallEventHandler) {
-                    ((DuringCallEventHandler) handler).onExtraCallback(AGEventHandler.EVENT_TYPE_ON_SPEAKER_STATS, (Object) speakerInfos);
-                }
-            }
-        }
-
-
-        @Override
-        public void onLeaveChannel(RtcStats stats) {
-
-        }
-
-
-        @Override
-        public void onLastmileQuality(int quality) {
-            log.debug("onLastmileQuality " + quality);
-            Iterator<AGEventHandler> it = mEventHandlerList.keySet().iterator();
-            while (it.hasNext()) {
-                AGEventHandler handler = it.next();
-                if (handler instanceof BeforeCallEventHandler) {
-                    ((BeforeCallEventHandler) handler).onLastmileQuality(quality);
-                }
-            }
-        }
-
-
-        @Override
-        public void onLastmileProbeResult(LastmileProbeResult result) {
-            log.debug("onLastmileProbeResult " + result);
-            Iterator<AGEventHandler> it = mEventHandlerList.keySet().iterator();
-            while (it.hasNext()) {
-                AGEventHandler handler = it.next();
-                if (handler instanceof BeforeCallEventHandler) {
-                    ((BeforeCallEventHandler) handler).onLastmileProbeResult(result);
-                }
-            }
-        }
-
-
-        @Override
-        public void onError(int error) {
-            log.debug("onError " + error + " " + RtcEngine.getErrorDescription(error));
-
-            Iterator<AGEventHandler> it = mEventHandlerList.keySet().iterator();
-            while (it.hasNext()) {
-                AGEventHandler handler = it.next();
-                if (handler instanceof DuringCallEventHandler) {
-                    ((DuringCallEventHandler) handler).onExtraCallback(AGEventHandler.EVENT_TYPE_ON_AGORA_MEDIA_ERROR, error, RtcEngine.getErrorDescription(error));
-                }
-            }
-        }
-
-
-        @Override
-        public void onStreamMessage(int uid, int streamId, byte[] data) {
-            log.debug("onStreamMessage " + (uid & 0xFFFFFFFFL) + " " + streamId + " " + Arrays.toString(data));
-
-            Iterator<AGEventHandler> it = mEventHandlerList.keySet().iterator();
-            while (it.hasNext()) {
-                AGEventHandler handler = it.next();
-                if (handler instanceof DuringCallEventHandler) {
-                    ((DuringCallEventHandler) handler).onExtraCallback(AGEventHandler.EVENT_TYPE_ON_DATA_CHANNEL_MSG, uid, data);
-                }
-            }
-        }
-
-
-        public void onStreamMessageError(int uid, int streamId, int error, int missed, int cached) {
-            log.warn("onStreamMessageError " + (uid & 0xFFFFFFFFL) + " " + streamId + " " + error + " " + missed + " " + cached);
-
-            Iterator<AGEventHandler> it = mEventHandlerList.keySet().iterator();
-            while (it.hasNext()) {
-                AGEventHandler handler = it.next();
-                if (handler instanceof DuringCallEventHandler) {
-                    ((DuringCallEventHandler) handler).onExtraCallback(AGEventHandler.EVENT_TYPE_ON_AGORA_MEDIA_ERROR, error, "on stream msg error " + (uid & 0xFFFFFFFFL) + " " + missed + " " + cached);
-                }
-            }
-        }
-
-
-        @Override
-        public void onConnectionLost() {
-            log.debug("onConnectionLost");
-
-            Iterator<AGEventHandler> it = mEventHandlerList.keySet().iterator();
-            while (it.hasNext()) {
-                AGEventHandler handler = it.next();
-                if (handler instanceof DuringCallEventHandler) {
-                    ((DuringCallEventHandler) handler).onExtraCallback(AGEventHandler.EVENT_TYPE_ON_APP_ERROR, CurrentUserSettings.AppError.NO_CONNECTION_ERROR);
-                }
-            }
-        }
-
-
-        @Override
-        public void onJoinChannelSuccess(String channel, int uid, int elapsed) {
-            log.debug("onJoinChannelSuccess " + channel + " " + (uid & 0xFFFFFFFFL) + "(" + uid + ") " + elapsed);
-
-            Iterator<AGEventHandler> it = mEventHandlerList.keySet().iterator();
-            while (it.hasNext()) {
-                AGEventHandler handler = it.next();
-                if (handler instanceof DuringCallEventHandler) {
-                    ((DuringCallEventHandler) handler).onJoinChannelSuccess(channel, uid, elapsed);
-                }
-            }
-        }
-
-        @Override
-        public void onAudioRouteChanged(int routing) {
-            log.debug("onAudioRouteChanged " + routing);
-
-            Iterator<AGEventHandler> it = mEventHandlerList.keySet().iterator();
-            while (it.hasNext()) {
-                AGEventHandler handler = it.next();
-                if (handler instanceof DuringCallEventHandler) {
-                    ((DuringCallEventHandler) handler).onExtraCallback(AGEventHandler.EVENT_TYPE_ON_AUDIO_ROUTE_CHANGED, routing);
-                }
-            }
-        }
-
-
-        public void onWarning(int warn) {
-            log.debug("onWarning " + warn);
-
-            String msg = "Check io.agora.rtc.Constants for details";
-            Iterator<AGEventHandler> it = mEventHandlerList.keySet().iterator();
-            while (it.hasNext()) {
-                AGEventHandler handler = it.next();
-                if (handler instanceof DuringCallEventHandler) {
-                    ((DuringCallEventHandler) handler).onExtraCallback(AGEventHandler.EVENT_TYPE_ON_AGORA_MEDIA_ERROR, warn, msg);
-                }
-            }
-        }
-
-
-        @Override
-        public void onAudioMixingStateChanged(int state, int errorCode) {
-            log.debug("onAudioMixingStateChanged() state = [" + state + "], errorCode = [" + errorCode + "]");
-        }
-
-    };
-
+    public void removeEventHandler(AGEventHandler handler) {
+        mEventHandler.removeEventHandler(handler);
+    }
+    public void remoteEventHandler(AGEventHandler handler) {
+        mEventHandler.removeEventHandler(handler);
+    }
 }

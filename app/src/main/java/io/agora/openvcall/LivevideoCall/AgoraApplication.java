@@ -34,8 +34,6 @@ public class AgoraApplication extends Application {
         super.onCreate();
         try {
             mRtcEngine = RtcEngine.create(getApplicationContext(), getString(R.string.agora_app_id), mHandler);
-            // Sets the channel profile of the Agora RtcEngine.
-            // The Agora RtcEngine differentiates channel profiles and applies different optimization algorithms accordingly. For example, it prioritizes smoothness and low latency for a video call, and prioritizes video quality for a video broadcast.
             mRtcEngine.setChannelProfile(io.agora.rtc.Constants.CHANNEL_PROFILE_LIVE_BROADCASTING);
             mRtcEngine.enableVideo();
             mRtcEngine.setLogFile(FileUtil.initializeLogFile(this));
