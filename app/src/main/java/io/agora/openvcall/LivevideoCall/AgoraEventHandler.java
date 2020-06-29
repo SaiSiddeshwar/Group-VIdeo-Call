@@ -1,6 +1,4 @@
-package io.agora.LivevideoCall;
-
-import android.graphics.PixelFormat;
+package io.agora.openvcall.LivevideoCall;
 
 import java.util.ArrayList;
 

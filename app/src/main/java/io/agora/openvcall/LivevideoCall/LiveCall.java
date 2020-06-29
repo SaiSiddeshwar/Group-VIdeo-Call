@@ -1,4 +1,4 @@
-package io.agora.LivevideoCall;
+package io.agora.openvcall.LivevideoCall;
 
 import android.Manifest;
 import android.animation.Animator;
@@ -13,7 +13,6 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.view.ViewTreeObserver;
 
-import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;

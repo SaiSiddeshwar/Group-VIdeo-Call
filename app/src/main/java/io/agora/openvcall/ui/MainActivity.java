@@ -15,7 +15,7 @@ import android.widget.Toast;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.agora.LivevideoCall.LiveCall;
+import io.agora.openvcall.LivevideoCall.LiveCall;
 import io.agora.openvcall.R;
 import io.agora.openvcall.model.CurrentUserSettings;
 

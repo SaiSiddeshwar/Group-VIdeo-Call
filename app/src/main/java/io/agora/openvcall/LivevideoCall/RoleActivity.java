@@ -1,4 +1,4 @@
-package io.agora.LivevideoCall;
+package io.agora.openvcall.LivevideoCall;
 
 import android.content.Intent;
 import android.os.Bundle;

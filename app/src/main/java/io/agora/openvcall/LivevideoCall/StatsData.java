@@ -1,7 +1,6 @@
 package io.agora.openvcall.LivevideoCall;
 
-class StatsData {
-
+public class StatsData {
     private long uid;
     private int width;
     private int height;

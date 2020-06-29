@@ -7,7 +7,6 @@ import android.widget.EditText;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import io.agora.LivevideoCall.LiveCall;
 import io.agora.openvcall.R;
 
 public class PhoneNumber extends AppCompatActivity {

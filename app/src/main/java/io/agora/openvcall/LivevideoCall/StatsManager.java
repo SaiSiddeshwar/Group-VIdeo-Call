@@ -1,4 +1,4 @@
-package io.agora.LivevideoCall;
+package io.agora.openvcall.LivevideoCall;
 
 import java.util.ArrayList;
 import java.util.HashMap;

@@ -1,4 +1,4 @@
-package io.agora.LivevideoCall;
+package io.agora.openvcall.LivevideoCall;
 
 import android.app.Application;
 import android.content.Context;
@@ -15,7 +15,7 @@ import io.agora.rtc.RtcEngine;
 
 public class AgoraApplication extends Application {
     private RtcEngine mRtcEngine;
-    private io.agora.LivevideoCall.EngineConfig mGlobalConfig = new io.agora.LivevideoCall.EngineConfig();
+    private io.agora.openvcall.LivevideoCall.EngineConfig mGlobalConfig = new io.agora.openvcall.LivevideoCall.EngineConfig();
     private AgoraEventHandler mHandler = new AgoraEventHandler();
     private StatsManager mStatsManager = new StatsManager();
 

@@ -1,4 +1,4 @@
-package io.agora.LivevideoCall;
+package io.agora.openvcall.LivevideoCall;
 
 import android.os.Bundle;
 import android.view.SurfaceView;

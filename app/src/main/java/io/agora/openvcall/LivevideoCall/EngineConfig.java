@@ -1,4 +1,4 @@
-package io.agora.LivevideoCall;
+package io.agora.openvcall.LivevideoCall;
 
 public class EngineConfig {
     // private static final int DEFAULT_UID = 0;
